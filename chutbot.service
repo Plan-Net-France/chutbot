@@ -1,0 +1,15 @@
+[Unit]
+Description=Chut Bot
+After=alsa-restore.service
+After=alsa-state.service
+Requires=alsa-restore.service
+Requires=alsa-state.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/chutbot -F /var/local/lib/chutbot/sounds/ --random
+User=chutbot
+Group=chutbot
+
+[Install]
+WantedBy=multi-user.target
