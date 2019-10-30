@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-import signal, sys, audioop, argparse, alsaaudio, random, time
+import signal, sys, audioop, argparse, alsaaudio, random, time, select
 from pydub import AudioSegment
 from pydub.exceptions import CouldntDecodeError
 from os import path
@@ -153,6 +153,13 @@ class ChutBot:
             except CouldntDecodeError:
                 print('Error loading bip file %s.' % self._bipFile, file= sys.stderr)
 
+    def _makePolling(self):
+        poll = select.poll()
+        descriptors = self._audioInput.polldescriptors()
+        for descriptor in descriptors:
+            poll.register(descriptor[0], descriptor[1])
+        return poll
+
     def _readLoop(self):
         global bitPerSamples, sampleRate, periodSize
         sampleLength = bitPerSamples / 8
@@ -166,15 +173,14 @@ class ChutBot:
         lenFiles = len(self._audioFiles)
         maxFile = lenFiles - 1
         current = random.randint(0, maxFile) if self._random else 0
-        period = periodSize / sampleRate
-        nextTime = time.time()
-        self.debug("Warming up…", end= '', flush= True)
+        poll = self._makePolling()
+        noPoll = 1
         while not self._stop:
             incoming = False
-            now = time.time()
-            if nextTime > now:
-                time.sleep(nextTime - now)
-            nextTime = time.time() + period
+            if noPoll == 0:
+                poll.poll()
+            else:
+                noPoll -= 1
             frames, data = self._audioInput.read()
             if frames > 0:
                 if silentFrames > 0:
@@ -200,9 +206,10 @@ class ChutBot:
                             else:
                                 current = (current + 1) % lenFiles
                             buffer = ''
-                            silentFrames = (sampleRate * sampleLength) * self._clear // 1000
+                            silentFrames = sampleRate * self._clear // 1000
                             self.debug('\rSilence…', end='', flush=True)
                             times = 0
+                            noPoll = 2
                     else:
                         if times > 0:
                             times -= 1
