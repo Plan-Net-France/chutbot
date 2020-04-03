@@ -238,7 +238,7 @@ class ChutBot:
         parser.add_argument('--config', type=str, help='Configuration file to use. With INI format. See example.ini.', metavar='file')
         group = parser.add_mutually_exclusive_group(required=not makeNonRequired)
         group.add_argument('file', nargs='?', default='', help='Sound file to play when volume threshold is reached.')
-        group.add_argument('-F', '--folder', default='', help='Folder where sound files to play randomly when threshold is reached are put.', metavar='folder')
+        group.add_argument('-F', '--folder', default='', help='Folder where sound files to play sequentially when threshold is reached are put.', metavar='folder')
         parser.add_argument('--random', action='store_true', help='Activate playing the files randomly.')
         group = parser.add_argument_group('Startup', 'Startup behaviour. Adjust here the behaviour when the bot is ready.')
         group.add_argument('-b', '--bipfile', default='', help='Sound file played on startup.', metavar='file')
@@ -246,7 +246,7 @@ class ChutBot:
         group = parser.add_argument_group('Detection', 'Detection behaviour. Adjust the threshold parameters.')
         group.add_argument('-t', '--volume', type=float, default=-15, help='Threshold volume in decibel, relative to max volume (0dB). Value is expected to be negative.', metavar='dB')
         group.add_argument('-f', '--frequency', type=int, default=10, help='Frequency of threshold computation in Hz, between 1 and 55.', metavar='Hz')
-        group.add_argument('-r', '--repeat', type=int, default=10, help='Number of times the threshold must be reached continously before triggering the playback.', metavar='times')
+        group.add_argument('-r', '--repeat', type=int, default=10, help='Number of times the threshold must be reached continuously before triggering the playback.', metavar='times')
         group.add_argument('-c', '--clear', type=int, default=5000, help='Duration in milliseconds after the playback in which the device will be silent.', metavar='duration')
         parser.add_argument('-v', '--verbose', action='count', help='Display program state.')
         return parser
