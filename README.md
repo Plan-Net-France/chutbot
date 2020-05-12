@@ -1,6 +1,7 @@
 # ChutBot
 
 [En Français](fr/README.md)
+
 [Look at the wiki to find how we have build to ChutBot](https://github.com/Plan-Net-France/chutbot/wiki)
 
 ## Dependencies
